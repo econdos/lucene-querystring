@@ -31,8 +31,8 @@ function isArray(value) {
 }
 
 function isBool(bool) {
-    return typeof bool === 'boolean' || 
-           (typeof bool === 'object' && 
+    return typeof bool === 'boolean' ||
+           (typeof bool === 'object' &&
             bool !== null            &&
            typeof bool.valueOf() === 'boolean');
 }
@@ -105,7 +105,7 @@ var OPERATORS = {
             value = [value];
         }
         var array = nestOperation(value, item, true);
-        return array.join(' AND ');  
+        return array.join(' AND ');
     },
     "$range": function (value, item, not) {
         return buildQueryField(item.left, null, not) + ':[ ' + value[0] +
@@ -126,8 +126,8 @@ var OPERATORS = {
             return buildQueryField(item.left, null, not) + ':' +
              luceneValueFormat(value);
         }else{
-            return buildQueryField(item.left, null, not) + ':(' + 
-            luceneValueFormat(value).join(' OR ') + ')';    
+            return buildQueryField(item.left, null, not) + ':(' +
+            luceneValueFormat(value).join(' OR ') + ')';
         }
     }
 };
@@ -162,7 +162,7 @@ function nestOperation(value, item, not){
                 if(nestValue.length == 1){
                     array.push(nestValue[0]);
                 }else{
-                    array.push('(' + nestValue.join( ' AND ') + ')');    
+                    array.push('(' + nestValue.join( ' AND ') + ')');
                 }
             }
         }
@@ -170,7 +170,7 @@ function nestOperation(value, item, not){
             var opResult = statement.op(statement.right, statement, not);
             if(opResult){
                 if(statement.op.leaf){
-                    array.push(opResult); 
+                    array.push(opResult);
                 }else{
                     array.push('(' + opResult + ')');
                 }
@@ -201,7 +201,7 @@ function generator(query) {
         statement = OPERATORS.$and(queryStatement);
     }
 
-    return statement;   
+    return statement;
 }
 
 function parse(query) {
@@ -225,10 +225,10 @@ function parse(query) {
 
         if(OPERATORS[key]){
             if(RANGE_OPERATORS[key]){
-                queryStatement.push(appendQuery(key, RANGE_OPERATORS[key](value), 
+                queryStatement.push(appendQuery(key, RANGE_OPERATORS[key](value),
                     OPERATORS[key]));
             }else{
-                queryStatement.push(appendQuery(key, parse(value), 
+                queryStatement.push(appendQuery(key, parse(value),
                     OPERATORS[key]));
             }
         }else{
@@ -236,11 +236,11 @@ function parse(query) {
                 var leftRange = (isDefined(value.$gt) && value.$gt) || '*';
                 var rightRange = (isDefined(value.$lt) && value.$lt) || '*';
 
-                queryStatement.push(appendQuery(key, [leftRange, rightRange], 
+                queryStatement.push(appendQuery(key, [leftRange, rightRange],
                     OPERATORS.$range));
             }
             else if(isDefined(value.$null)){
-                queryStatement.push(appendQuery(key, value.$null, 
+                queryStatement.push(appendQuery(key, value.$null,
                     OPERATORS.$null));
             }
             else if (isDefined(value.$in)) {
@@ -268,13 +268,13 @@ function parse(query) {
     if(queryStatement.length == 1){
         return queryStatement[0];
     }else{
-        return queryStatement;    
+        return queryStatement;
     }
 }
 
 function appendQuery(key, value, op) {
     return {
-        left: key, 
+        left: key,
         right: value,
         op: op
     };
