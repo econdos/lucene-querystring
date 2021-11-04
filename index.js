@@ -208,8 +208,10 @@ function parse(query) {
     if(!query){
         return query;
     }
-    if(isString(query) ||
-        isNumber(query) ||
+    if (isString(query)) {
+        return `"${query}"`
+    }
+    if(isNumber(query) ||
         isBool(query) ||
         query instanceof Date){
         return query;
